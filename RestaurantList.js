@@ -17,7 +17,9 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
-        padding: 10
+        padding: 10,
+        borderBottomColor:'#dddddd',
+        borderBottomWidth: 1
     },
     thumbnail: {
         width: 53,
@@ -34,10 +36,6 @@ var styles = StyleSheet.create({
     author: {
         color: '#656565'
     },
-    separator: {
-        height: 1,
-        backgroundColor: '#dddddd'
-    }
 });
 
 var FAKE_DATA = [
