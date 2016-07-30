@@ -7,7 +7,7 @@ import {
   Text,
   TextInput,
   TouchableHighlight,
-  ActivityIndicatorIOS
+  ActivityIndicator
 } from 'react-native';
 
 var styles = StyleSheet.create({
@@ -66,7 +66,7 @@ class AddRestaurant extends Component {
   }
   render() {
     var spinner = this.state.isLoading ?
-    ( <ActivityIndicatorIOS hidden='true' size='large'/>) :
+    ( <ActivityIndicator hidden='true' size='large'/>) :
     ( <View/>);
     return(
       <View style={styles.container}>
@@ -97,6 +97,38 @@ class AddRestaurant extends Component {
   }
   addRestaurant() {
     this.fetchData();
+  }
+  fetchData(){
+    this.setState({ isLoading: true });
+    var ADD_URL = "http://107.170.230.36:8080/api/restaurants";
+    fetch(ADD_URL, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: this.state.name,
+        description: this.state.description
+      })
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      this.setState({isLoading: false});
+      if(responseData){
+        this.setState({
+          msg: responseData
+        });
+      } else{
+        this.setState({ msg: ' no response from server'});
+      }
+    })
+    .catch(error =>
+      this.setState({
+        isLoading: false,
+        errorMessage: error
+      }))
+    .done()
   }
 }
 
