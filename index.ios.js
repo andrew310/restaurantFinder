@@ -7,7 +7,7 @@
 'use strict';
 
 var RestaurantList = require('./RestaurantView.js');
-var Search = require('./SearchView.js');
+var Search = require('./AddView.js');
 import React, { Component } from 'react';
 import {
   AppRegistry,
