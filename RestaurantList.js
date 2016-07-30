@@ -8,7 +8,8 @@ import {
  View,
  ListView,
  TouchableHighlight,
- ActivityIndicatorIOS
+ ActivityIndicator,
+ RefreshControl
 } from 'react-native';
 
 var styles = StyleSheet.create({
@@ -23,8 +24,8 @@ var styles = StyleSheet.create({
         borderBottomWidth: 1
     },
     thumbnail: {
-        width: 53,
-        height: 81,
+        width: 30,
+        height: 30,
         marginRight: 10
     },
     rightContainer: {
@@ -70,7 +71,8 @@ class RestaurantList extends Component {
       this.setState(
         {
           dataSource: this.state.dataSource.cloneWithRows(responseData),
-          isLoading: false
+          isLoading: false,
+          refreshing: false
         });
     })
     .catch((error) => {
@@ -83,7 +85,7 @@ class RestaurantList extends Component {
   }
   renderRestaurant(restaurant) {
     //var restaurant = FAKE_DATA[0];
-    var imgurl = "http://captaindsjobs.com/wp-content/themes/captainds/css/images/logo.png";
+    var imgurl = "https://cdn1.iconfinder.com/data/icons/business-items/512/market_store_local_shop_cafe_commerce_retail_shopping_grocery_facade_fastfood_small_building_flat_design_icon-128.png";
     return(
       <TouchableHighlight>
         <View style={styles.container}>
@@ -102,7 +104,7 @@ class RestaurantList extends Component {
   renderLoadingView(){
     return(
       <View style={styles.loading}>
-        <ActivityIndicatorIOS
+        <ActivityIndicator
           size='large'/>
         <Text>
           Loading restaurants...
@@ -110,12 +112,22 @@ class RestaurantList extends Component {
       </View>
     );
   }
+  _onRefresh(){
+    this.setState({refreshing: true});
+    this.fetchData();
+  }
   render(){
     if(this.state.isLoading){
       return this.renderLoadingView();
     }
     return(
       <ListView
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)}
+          />
+        }
         dataSource={this.state.dataSource}
         renderRow={this.renderRestaurant}
         style={styles.listView}
