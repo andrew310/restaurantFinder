@@ -7,7 +7,8 @@ import {
  Text,
  View,
  ListView,
- TouchableHighlight
+ TouchableHighlight,
+ ActivityIndicatorIOS
 } from 'react-native';
 
 var styles = StyleSheet.create({
@@ -36,30 +37,53 @@ var styles = StyleSheet.create({
     author: {
         color: '#656565'
     },
+    listView: {
+      paddingTop: 60,
+      backgroundColor: '#F5FCFF'
+    },
+    loading: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
 });
 
 var FAKE_DATA = [
     {name: "Captain D's", description: "terrible seafood"},
     {name: "Jack in the Box", description: "terrible hamburgers"}
 ];
+var REQUEST_URL = "http://107.170.230.36:8080/api/restaurants/";
 class RestaurantList extends Component {
   constructor(props){
     super(props);
     this.state = {
+      isLoading: true,
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
       })
     };
   }
+  fetchData() {
+    fetch(REQUEST_URL)
+    .then((response) => response.json())
+    .then((responseData) =>{
+      this.setState(
+        {
+          dataSource: this.state.dataSource.cloneWithRows(responseData),
+          isLoading: false
+        });
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+    .done();
+  }
   componentDidMount(){
-    var restaurants = FAKE_DATA;
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(restaurants)
-    });
+    this.fetchData();
   }
   renderRestaurant(restaurant) {
     //var restaurant = FAKE_DATA[0];
-    var imgurl = "http://facebook.github.io/react/img/logo_og.png";
+    var imgurl = "http://captaindsjobs.com/wp-content/themes/captainds/css/images/logo.png";
     return(
       <TouchableHighlight>
         <View style={styles.container}>
@@ -75,11 +99,25 @@ class RestaurantList extends Component {
       </TouchableHighlight>
     );
   }
+  renderLoadingView(){
+    return(
+      <View style={styles.loading}>
+        <ActivityIndicatorIOS
+          size='large'/>
+        <Text>
+          Loading restaurants...
+        </Text>
+      </View>
+    );
+  }
   render(){
+    if(this.state.isLoading){
+      return this.renderLoadingView();
+    }
     return(
       <ListView
         dataSource={this.state.dataSource}
-        renderRow={this.renderRestaurant.bind(this)}
+        renderRow={this.renderRestaurant}
         style={styles.listView}
       />
     );
