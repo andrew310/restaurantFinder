@@ -30,7 +30,7 @@ class RestaurantFinder extends Component {
       <TabBarIOS selectedTab={this.state.selectedTab}>
           <TabBarIOS.Item
             selected={this.state.selectedTab === 'restaurants'}
-            systemIcon="top-rated"
+              icon={require('./res.png')}
               onPress={() => {
                   this.setState({
                       selectedTab: 'restaurants'
@@ -40,7 +40,7 @@ class RestaurantFinder extends Component {
           </TabBarIOS.Item>
           <TabBarIOS.Item
             selected={this.state.selectedTab === 'search'}
-            systemIcon="search"
+            icon={require('./Plus-50.png')}
             onPress={() => {
                 this.setState({
                     selectedTab: 'search'

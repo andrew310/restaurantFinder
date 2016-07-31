@@ -79,6 +79,17 @@ class AddRestaurant extends Component {
           <Text style={styles.fieldLabel}>Description:</Text>
           <TextInput style={styles.searchInput} onChange={this.restaurantDescriptionInput.bind(this)}/>
         </View>
+        <View>
+          <Text style={styles.fieldLabel}>Address:</Text>
+          <Text>{this.state.address}</Text>
+        </View>
+
+        <TouchableHighlight style={styles.button}
+          underlayColor='#f1c40f'
+          onPress={this.setLocation.bind(this)}>
+          <Text style={styles.buttonText}>Get My Location</Text>
+          </TouchableHighlight>
+
         <TouchableHighlight style={styles.button}
           underlayColor='#f1c40f'
           onPress={this.addRestaurant.bind(this)}>
@@ -88,6 +99,31 @@ class AddRestaurant extends Component {
           <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
       </View>
     );
+  }
+  setLocation(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        var lat = position.coords.latitude;
+        var long = position.coords.longitude;
+        //this.setState({userPos});
+        this.fetchAddress(lat, long);
+      },
+      (error) => alert(error.message),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    );
+  }
+  fetchAddress(lat, long){
+    var URL = "http://maps.googleapis.com/maps/api/geocode/json?latlng=";
+    var full = URL + lat + "," + long;
+    fetch(full)
+    .then((response) => response.json())
+    .then((responseData) => {
+      const res = responseData.results[0].formatted_address;
+      this.setState({
+        address: res
+      });
+    })
+    .done()
   }
   restaurantNameInput(event) {
     this.setState({ name: event.nativeEvent.text });
