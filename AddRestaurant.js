@@ -97,6 +97,10 @@ class AddRestaurant extends Component {
           </TouchableHighlight>
           {spinner}
           <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
+          <View>
+            <Text style={styles.fieldLabel}></Text>
+            <Text>{this.state.msg}</Text>
+          </View>
       </View>
     );
   }
@@ -145,15 +149,17 @@ class AddRestaurant extends Component {
       },
       body: JSON.stringify({
         name: this.state.name,
-        description: this.state.description
+        description: this.state.description,
+        address: this.state.address
       })
     })
     .then((response) => response.json())
     .then((responseData) => {
       this.setState({isLoading: false});
       if(responseData){
+        const stuff = responseData.payload;
         this.setState({
-          msg: responseData
+          msg: stuff,
         });
       } else{
         this.setState({ msg: ' no response from server'});

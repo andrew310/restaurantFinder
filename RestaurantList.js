@@ -33,9 +33,9 @@ var styles = StyleSheet.create({
     },
     title: {
         fontSize: 20,
-        marginBottom: 8
+        marginBottom: 4
     },
-    author: {
+    desc: {
         color: '#656565'
     },
     listView: {
@@ -46,6 +46,11 @@ var styles = StyleSheet.create({
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center'
+    },
+    address:
+    {
+      color: '#7f7f7f',
+      marginBottom: 4
     }
 });
 
@@ -95,7 +100,9 @@ class RestaurantList extends Component {
           />
           <View style={styles.rightContainer}>
             <Text style={styles.title}>{restaurant.name}</Text>
-            <Text style={styles.author}>{restaurant.description}</Text>
+            <Text style={styles.address}>{restaurant.address}</Text>
+            <Text style={styles.desc}>{restaurant.description}</Text>
+
           </View>
         </View>
       </TouchableHighlight>
