@@ -8,6 +8,7 @@
 
 var RestaurantList = require('./RestaurantView.js');
 var Search = require('./AddView.js');
+var User = require('./UserView.js');
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -22,12 +23,22 @@ class RestaurantFinder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'restaurants'
+      selectedTab: 'user'
     };
   }
   render() {
     return (
       <TabBarIOS selectedTab={this.state.selectedTab}>
+          <TabBarIOS.Item
+            selected={this.state.selectedTab === 'user'}
+              icon={require('./user.png')}
+              onPress={() => {
+                  this.setState({
+                      selectedTab: 'user'
+                  });
+              }}>
+              <User/>
+          </TabBarIOS.Item>
           <TabBarIOS.Item
             selected={this.state.selectedTab === 'restaurants'}
               icon={require('./res.png')}

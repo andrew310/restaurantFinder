@@ -51,6 +51,22 @@ var styles = StyleSheet.create({
     {
       color: '#7f7f7f',
       marginBottom: 4
+    },
+    fieldLabel: {
+        fontSize: 15,
+        marginTop: 15
+    },
+    button: {
+        height: 36,
+        backgroundColor: '#f39c12',
+        borderRadius: 8,
+        justifyContent: 'center',
+        marginTop: 15
+    },
+    buttonText: {
+        fontSize: 18,
+        color: 'white',
+        alignSelf: 'center'
     }
 });
 
@@ -58,23 +74,36 @@ var FAKE_DATA = [
     {name: "Captain D's", description: "terrible seafood"},
     {name: "Jack in the Box", description: "terrible hamburgers"}
 ];
-var REQUEST_URL = "http://107.170.230.36:8080/api/restaurants/";
+var REQUEST_URL = "http://138.68.49.15:8080/api/restaurants";
 class RestaurantList extends Component {
   constructor(props){
     super(props);
     this.state = {
       isLoading: true,
+      success: false,
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
       })
     };
   }
   fetchData() {
-    fetch(REQUEST_URL)
+    var token = this.state.token;
+    fetch(REQUEST_URL, {
+      method: 'GET',
+      headers: {
+        'x-access-token' : global.token
+      }
+    })
     .then((response) => response.json())
     .then((responseData) =>{
+      var s = this.state.success;
+      if(!responseData.hasOwnProperty("success")){
+        s = true;
+      }
       this.setState(
         {
+          success: s,
+          message: responseData.message,
           dataSource: this.state.dataSource.cloneWithRows(responseData),
           isLoading: false,
           refreshing: false
@@ -108,6 +137,22 @@ class RestaurantList extends Component {
       </TouchableHighlight>
     );
   }
+  renderNotLoggedIn(){
+    return(
+      <View style={styles.container}>
+        <View>
+          <Text style={styles.fieldLabel}></Text>
+          <Text>Please log in.</Text>
+        </View>
+
+        <TouchableHighlight style={styles.button}
+          underlayColor='#f1c40f'
+          onPress={this._onRefresh.bind(this)}>
+          <Text style={styles.buttonText}>Refresh</Text>
+        </TouchableHighlight>
+      </View>
+    );
+  }
   renderLoadingView(){
     return(
       <View style={styles.loading}>
@@ -124,9 +169,14 @@ class RestaurantList extends Component {
     this.fetchData();
   }
   render(){
+    //while we are waiting on the API
     if(this.state.isLoading){
       return this.renderLoadingView();
     }
+    if(!this.state.success){
+      return this.renderNotLoggedIn();
+    }
+    //once we have the data
     return(
       <ListView
         refreshControl={
@@ -135,7 +185,9 @@ class RestaurantList extends Component {
             onRefresh={this._onRefresh.bind(this)}
           />
         }
+        //get our data from state
         dataSource={this.state.dataSource}
+        //map to our restaurant component
         renderRow={this.renderRestaurant}
         style={styles.listView}
       />
