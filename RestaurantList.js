@@ -12,6 +12,8 @@ import {
  RefreshControl
 } from 'react-native';
 
+var RestaurantDetail = require('./RestaurantDetail.js');
+
 var styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -75,9 +77,13 @@ var FAKE_DATA = [
     {name: "Jack in the Box", description: "terrible hamburgers"}
 ];
 var REQUEST_URL = "http://138.68.49.15:8080/api/restaurants";
+
+//create our React component
 class RestaurantList extends Component {
   constructor(props){
     super(props);
+    //bind this to class (we have to do this because it is called by the Listview)
+    this.renderRestaurant = this.renderRestaurant.bind(this)
     this.state = {
       isLoading: true,
       success: false,
@@ -86,17 +92,20 @@ class RestaurantList extends Component {
       })
     };
   }
+  //get request for all restaurants with this username from server
   fetchData() {
     var token = this.state.token;
     fetch(REQUEST_URL, {
       method: 'GET',
       headers: {
+        //send our credentials token
         'x-access-token' : global.token
       }
     })
     .then((response) => response.json())
     .then((responseData) =>{
       var s = this.state.success;
+      //check if we got a message instead of the array of data
       if(!responseData.hasOwnProperty("success")){
         s = true;
       }
@@ -114,14 +123,17 @@ class RestaurantList extends Component {
     })
     .done();
   }
+  //wait until our view has finished loading, then send the request
   componentDidMount(){
     this.fetchData();
   }
+
+  //this is called for each item in the array we get back from server
   renderRestaurant(restaurant) {
     //var restaurant = FAKE_DATA[0];
     var imgurl = "https://cdn1.iconfinder.com/data/icons/business-items/512/market_store_local_shop_cafe_commerce_retail_shopping_grocery_facade_fastfood_small_building_flat_design_icon-128.png";
     return(
-      <TouchableHighlight>
+      <TouchableHighlight onPress={()=>this.showRestaurant(restaurant)} underlayColor='#dddddd'>
         <View style={styles.container}>
           <Image
             source={{uri: imgurl}}
@@ -137,6 +149,17 @@ class RestaurantList extends Component {
       </TouchableHighlight>
     );
   }
+
+  //makes restaurant vieable in the restaurantDetail page
+  showRestaurant(restaurant){
+    this.props.navigator.push({
+      title: restaurant.name,
+      component: RestaurantDetail,
+      passProps: {restaurant}
+    });
+  }
+
+  //this view is rendered if we are not logged in
   renderNotLoggedIn(){
     return(
       <View style={styles.container}>
@@ -153,6 +176,7 @@ class RestaurantList extends Component {
       </View>
     );
   }
+  //view to be rendered while waiting for request to finish
   renderLoadingView(){
     return(
       <View style={styles.loading}>
@@ -164,6 +188,7 @@ class RestaurantList extends Component {
       </View>
     );
   }
+  //if user is logged in but there is nothing to show
   renderEmptyView(){
     return(
       <View style={styles.container}>
@@ -180,6 +205,7 @@ class RestaurantList extends Component {
       </View>
     );
   }
+  //called when user pulls/swipes down on the page
   _onRefresh(){
     this.setState({refreshing: true});
     this.fetchData();
