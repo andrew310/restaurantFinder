@@ -75,11 +75,11 @@ class UserForm extends Component {
         <Text style={styles.instructions}>Login or Signup</Text>
         <View>
           <Text style={styles.fieldLabel}>username:</Text>
-          <TextInput style={styles.Input} onChange={this.usernameInput.bind(this)}/>
+          <TextInput style={styles.Input} value={this.state.username} onChange={this.usernameInput.bind(this)}/>
         </View>
         <View>
           <Text style={styles.fieldLabel}>password:</Text>
-          <TextInput secureTextEntry={true} style={styles.Input} onChange={this.passwordInput.bind(this)}/>
+          <TextInput secureTextEntry={true} style={styles.Input} value={this.state.password} onChange={this.passwordInput.bind(this)}/>
         </View>
 
         <TouchableHighlight style={styles.button}
@@ -103,14 +103,16 @@ class UserForm extends Component {
           <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
           <View>
             <Text style={styles.fieldLabel}></Text>
-            <Text>{this.state.token}</Text>
+            <Text>{this.state.msg}</Text>
           </View>
       </View>
     );
   }
+  //function to set state of the input box
   usernameInput(event) {
     this.setState({ username: event.nativeEvent.text });
   }
+  //function to set state of input box
   passwordInput(event) {
     this.setState({ password: event.nativeEvent.text });
   }
@@ -133,7 +135,9 @@ class UserForm extends Component {
       if(responseData){
         const stuff = responseData.message;
         this.setState({
-          msg: stuff
+          msg: stuff,
+          username: '',
+          password: ''
         });
       } else{
         this.setState({ msg: ' no response from server'});
@@ -168,7 +172,9 @@ class UserForm extends Component {
           global.token = token;
           this.setState({
             msg: stuff,
-            token: global.token
+            token: global.token,
+            password: '',
+            username: ''
           });
         } else{
           this.setState({ msg: ' no response from server'});

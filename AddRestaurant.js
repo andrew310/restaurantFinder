@@ -73,11 +73,11 @@ class AddRestaurant extends Component {
         <Text style={styles.instructions}>Add Restaurant</Text>
         <View>
           <Text style={styles.fieldLabel}>Restaurant name:</Text>
-          <TextInput style={styles.searchInput} onChange={this.restaurantNameInput.bind(this)}/>
+          <TextInput style={styles.searchInput} value={this.state.name} onChange={this.restaurantNameInput.bind(this)}/>
         </View>
         <View>
           <Text style={styles.fieldLabel}>Description:</Text>
-          <TextInput style={styles.searchInput} onChange={this.restaurantDescriptionInput.bind(this)}/>
+          <TextInput style={styles.searchInput} value={this.state.description} onChange={this.restaurantDescriptionInput.bind(this)}/>
         </View>
         <View>
           <Text style={styles.fieldLabel}>Address:</Text>
@@ -140,17 +140,18 @@ class AddRestaurant extends Component {
   }
   fetchData(){
     this.setState({ isLoading: true });
-    var ADD_URL = "http://107.170.230.36:8080/api/restaurants";
+    var ADD_URL = "http://138.68.49.15:8080/api/restaurants";
     fetch(ADD_URL, {
       method: 'POST',
       headers: {
+        'x-access-token' : global.token,
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         name: this.state.name,
         description: this.state.description,
-        address: this.state.address
+        address: this.state.address,
       })
     })
     .then((response) => response.json())
@@ -160,6 +161,8 @@ class AddRestaurant extends Component {
         const stuff = responseData.payload;
         this.setState({
           msg: stuff,
+          name: '',
+          description: ''
         });
       } else{
         this.setState({ msg: ' no response from server'});

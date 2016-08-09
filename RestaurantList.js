@@ -164,10 +164,27 @@ class RestaurantList extends Component {
       </View>
     );
   }
+  renderEmptyView(){
+    return(
+      <View style={styles.container}>
+        <View>
+          <Text style={styles.fieldLabel}></Text>
+          <Text>Add Some Restaurants.</Text>
+        </View>
+
+        <TouchableHighlight style={styles.button}
+          underlayColor='#f1c40f'
+          onPress={this._onRefresh.bind(this)}>
+          <Text style={styles.buttonText}>Refresh</Text>
+        </TouchableHighlight>
+      </View>
+    );
+  }
   _onRefresh(){
     this.setState({refreshing: true});
     this.fetchData();
   }
+  //if we get here, request to api was successful
   render(){
     //while we are waiting on the API
     if(this.state.isLoading){
@@ -175,6 +192,10 @@ class RestaurantList extends Component {
     }
     if(!this.state.success){
       return this.renderNotLoggedIn();
+    }
+    const len = this.state.dataSource.length;
+    if(len){
+      return this.renderEmptyView();
     }
     //once we have the data
     return(
@@ -185,6 +206,7 @@ class RestaurantList extends Component {
             onRefresh={this._onRefresh.bind(this)}
           />
         }
+        enableEmptySections={true}
         //get our data from state
         dataSource={this.state.dataSource}
         //map to our restaurant component
