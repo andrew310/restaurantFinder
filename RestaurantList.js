@@ -84,6 +84,7 @@ class RestaurantList extends Component {
     super(props);
     //bind this to class (we have to do this because it is called by the Listview)
     this.renderRestaurant = this.renderRestaurant.bind(this)
+    this._onRefresh = this._onRefresh.bind(this)
     this.state = {
       isLoading: true,
       success: false,
@@ -207,6 +208,9 @@ class RestaurantList extends Component {
   }
   //called when user pulls/swipes down on the page
   _onRefresh(){
+    // if(!global.token){
+    //   this.set
+    // }
     this.setState({refreshing: true});
     this.fetchData();
   }
@@ -219,8 +223,11 @@ class RestaurantList extends Component {
     if(!this.state.success){
       return this.renderNotLoggedIn();
     }
-    const len = this.state.dataSource.length;
-    if(len){
+    if(!global.token){
+      return this.renderNotLoggedIn();
+    }
+    const check = this.state.dataSource.getRowCount();
+    if(!check){
       return this.renderEmptyView();
     }
     //once we have the data

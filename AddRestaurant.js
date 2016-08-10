@@ -95,12 +95,13 @@ class AddRestaurant extends Component {
           onPress={this.addRestaurant.bind(this)}>
           <Text style={styles.buttonText}>Submit</Text>
           </TouchableHighlight>
-          {spinner}
+
           <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
           <View>
             <Text style={styles.fieldLabel}></Text>
             <Text>{this.state.msg}</Text>
           </View>
+        {spinner}
       </View>
     );
   }
@@ -158,7 +159,7 @@ class AddRestaurant extends Component {
     .then((responseData) => {
       this.setState({isLoading: false});
       if(responseData){
-        const stuff = responseData.payload;
+        const stuff = responseData.message;
         this.setState({
           msg: stuff,
           name: '',

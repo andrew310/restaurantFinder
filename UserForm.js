@@ -188,6 +188,9 @@ class UserForm extends Component {
       .done()}
   logout(){
     global.token = '';
+    this.setState({
+      msg: "Logged out."
+    });
   }
 }
 
