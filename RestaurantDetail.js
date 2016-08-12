@@ -80,12 +80,18 @@ class RestaurantDetail extends Component {
       }
     );
   }
+
+  //handler for restaurant name input field
   restaurantNameInput(event) {
     this.setState({ name: event.nativeEvent.text });
   }
+
+  //handle for restaurant description input field
   restaurantDescriptionInput(event) {
     this.setState({ description: event.nativeEvent.text });
   }
+
+  //handler for submit button to edit restaurant
   editRestaurant(){
     this.setState({ isLoading: true });
     var ADD_URL = "http://138.68.49.15:8080/api/restaurants/" + this.props.restaurant._id;
@@ -103,8 +109,10 @@ class RestaurantDetail extends Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
+      //turn off the spinner
       this.setState({isLoading: false});
       if(responseData){
+        //update state with restults
         const stuff = responseData.payload;
         this.setState({
           msg: stuff,
@@ -120,6 +128,8 @@ class RestaurantDetail extends Component {
       }))
     .done()
   }
+
+  /*handler for delete button, sends DELETE request to server*/
   deleteRestaurant(){
     this.setState({ isLoading: true });
     var ADD_URL = "http://138.68.49.15:8080/api/restaurants/" + this.props.restaurant._id;
@@ -139,6 +149,7 @@ class RestaurantDetail extends Component {
     .then((responseData) => {
       this.setState({isLoading: false});
       if(responseData){
+        //update state with resulting message
         const stuff = responseData.payload;
         this.setState({
           msg: stuff,
@@ -154,6 +165,8 @@ class RestaurantDetail extends Component {
       }))
     .done()
   }
+
+  //render component to html
   render() {
     ( <View/>);
     //props from parent component
@@ -166,6 +179,7 @@ class RestaurantDetail extends Component {
     ( <View/>);
     return (
       <View>
+      
         <View style={styles.container}>
           <Image style={styles.image} source={{uri: imgurl}} />
           <Text style={styles.description}>{description}</Text>

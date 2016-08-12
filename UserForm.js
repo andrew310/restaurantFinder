@@ -67,9 +67,11 @@ class UserForm extends Component {
     };
   }
   render() {
+    //hide spinner if waiting on response
     var spinner = this.state.isLoading ?
     ( <ActivityIndicator hidden='true' size='large'/>) :
     ( <View/>);
+
     return(
       <View style={styles.container}>
         <Text style={styles.instructions}>Login or Signup</Text>
@@ -108,14 +110,18 @@ class UserForm extends Component {
       </View>
     );
   }
+
   //function to set state of the input box
   usernameInput(event) {
     this.setState({ username: event.nativeEvent.text });
   }
+
   //function to set state of input box
   passwordInput(event) {
     this.setState({ password: event.nativeEvent.text });
   }
+
+  /*handler for signup button, sends POST request*/
   signup(){
     var ADD_URL = "http://138.68.49.15:8080/api/users";
     fetch(ADD_URL, {
@@ -150,6 +156,8 @@ class UserForm extends Component {
       }))
     .done()
   }
+
+  /*handler for login button, sends post request*/
   login(){
       var ADD_URL = "http://138.68.49.15:8080/api/users/token";
       fetch(ADD_URL, {
@@ -186,12 +194,15 @@ class UserForm extends Component {
           errorMessage: error
         }))
       .done()}
+
+  /*handler for logout function, simply deletes token*/
   logout(){
     global.token = '';
     this.setState({
       msg: "Logged out."
     });
   }
+  
 }
 
 module.exports = UserForm;

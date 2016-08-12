@@ -10,6 +10,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 
+
+//styles to be used in our html
 var styles = StyleSheet.create({
     container: {
         marginTop: 65,
@@ -54,6 +56,8 @@ var styles = StyleSheet.create({
     }
 });
 
+
+//this is the entire component for the add restaurant tab
 class AddRestaurant extends Component {
   constructor(props){
     super(props);
@@ -64,21 +68,27 @@ class AddRestaurant extends Component {
       errorMessage: ''
     };
   }
+
+  //everything in here rendered to HTML
   render() {
     var spinner = this.state.isLoading ?
     ( <ActivityIndicator hidden='true' size='large'/>) :
     ( <View/>);
     return(
       <View style={styles.container}>
+
         <Text style={styles.instructions}>Add Restaurant</Text>
         <View>
+
           <Text style={styles.fieldLabel}>Restaurant name:</Text>
           <TextInput style={styles.searchInput} value={this.state.name} onChange={this.restaurantNameInput.bind(this)}/>
         </View>
+
         <View>
           <Text style={styles.fieldLabel}>Description:</Text>
           <TextInput style={styles.searchInput} value={this.state.description} onChange={this.restaurantDescriptionInput.bind(this)}/>
         </View>
+
         <View>
           <Text style={styles.fieldLabel}>Address:</Text>
           <Text>{this.state.address}</Text>
@@ -88,35 +98,43 @@ class AddRestaurant extends Component {
           underlayColor='#f1c40f'
           onPress={this.setLocation.bind(this)}>
           <Text style={styles.buttonText}>Get My Location</Text>
-          </TouchableHighlight>
+        </TouchableHighlight>
 
         <TouchableHighlight style={styles.button}
           underlayColor='#f1c40f'
           onPress={this.addRestaurant.bind(this)}>
           <Text style={styles.buttonText}>Submit</Text>
-          </TouchableHighlight>
 
+        </TouchableHighlight>
+          {spinner}
           <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
+
           <View>
             <Text style={styles.fieldLabel}></Text>
             <Text>{this.state.msg}</Text>
           </View>
-        {spinner}
+
       </View>
     );
   }
+
+  /*Call to IOS feature for GPS location */
   setLocation(){
     navigator.geolocation.getCurrentPosition(
       (position) => {
         var lat = position.coords.latitude;
         var long = position.coords.longitude;
-        //this.setState({userPos});
+
+        //send results to fetchAddress function to convert to address
         this.fetchAddress(lat, long);
       },
       (error) => alert(error.message),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
   }
+
+
+  /* SEND GPS COORDS TO GOOGLE AND GET ADDRESS IN RETURN */
   fetchAddress(lat, long){
     var URL = "http://maps.googleapis.com/maps/api/geocode/json?latlng=";
     var full = URL + lat + "," + long;
@@ -130,15 +148,24 @@ class AddRestaurant extends Component {
     })
     .done()
   }
+
+  /*Handler to set text in restaurant name input box to the state*/
   restaurantNameInput(event) {
     this.setState({ name: event.nativeEvent.text });
   }
+
+  /*Handler to set text in restaurant description input box to the state */
   restaurantDescriptionInput(event) {
     this.setState({ description: event.nativeEvent.text });
   }
+
+  /*handler function for when submit button is clicked*/
   addRestaurant() {
     this.fetchData();
   }
+
+
+  /*POST REQUEST SENT TO EDIT A SPECIFIC RESTAURANT */
   fetchData(){
     this.setState({ isLoading: true });
     var ADD_URL = "http://138.68.49.15:8080/api/restaurants";
@@ -159,11 +186,12 @@ class AddRestaurant extends Component {
     .then((responseData) => {
       this.setState({isLoading: false});
       if(responseData){
-        const stuff = responseData.message;
+        const stuff = responseData.payload;
         this.setState({
           msg: stuff,
           name: '',
-          description: ''
+          description: '',
+          address: ''
         });
       } else{
         this.setState({ msg: ' no response from server'});
